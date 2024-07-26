@@ -23,6 +23,3 @@ def setup_logging():
         }
     )
 
-
-def get_logger():
-    return None

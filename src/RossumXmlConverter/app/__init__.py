@@ -1,5 +1,6 @@
 ﻿from flask import Flask
 from .config import Config
+from app.controllers.export import export_bp
 from .logging_setup import setup_logging
 
 
@@ -8,5 +9,8 @@ def create_app():
 
     app = Flask(__name__)
     app.config.from_object(Config)
+
+    # Register Blueprints
+    app.register_blueprint(export_bp)
 
     return app
