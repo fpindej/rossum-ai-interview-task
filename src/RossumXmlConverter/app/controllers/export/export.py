@@ -17,7 +17,7 @@ auth = HTTPBasicAuth()
 @auth.verify_password
 def verify_password(username, password):
     current_app.logger.info('Verifying user credentials')
-    return auth_verify_password(username, password)
+    return auth_verify_password(username, password, current_app.config['USERNAME'], current_app.config['PASSWORD'])
 
 
 @export_bp.route('/export', methods=['POST'])

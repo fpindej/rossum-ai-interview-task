@@ -9,7 +9,13 @@ def create_app():
     setup_logging()
 
     app = Flask(__name__)
+
+    # Load Config
     app.config.from_object(Config)
+    app.config.update(
+        USERNAME=Config.USERNAME,
+        PASSWORD=Config.PASSWORD
+    )
 
     # Register Blueprints
     app.register_blueprint(export_bp)
