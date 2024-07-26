@@ -2,7 +2,7 @@
 
 
 @dataclass(frozen=True)
-class ConvertRequestDto:
+class ExportRequestDto:
     annotation_id: str
     queue_id: str
 
