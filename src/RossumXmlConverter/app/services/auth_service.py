@@ -1,6 +1,5 @@
-﻿import os
+﻿from app import Config
 
 
-# TODO: Implement the verify_password function
 def verify_password(username, password):
-    return True
+    return username == Config.USERNAME and password == Config.PASSWORD

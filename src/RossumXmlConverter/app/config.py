@@ -2,5 +2,5 @@
 
 
 class Config:
-    USERNAME = os.environ.get('USERNAME')
-    PASSWORD = os.environ.get('PASSWORD')
+    USERNAME = os.getenv('ROSSUM_USERNAME')
+    PASSWORD = os.getenv('ROSSUM_PASSWORD')
