@@ -2,8 +2,8 @@
 
 from flask import request, jsonify
 
-from app.controllers.result_dto import ResultDto
-from app.utils.contenttype.content_type_enum import ContentType
+from ...controllers.result_dto import ResultDto
+from .content_type_enum import ContentType
 
 
 def check_content_type(content_type: ContentType):

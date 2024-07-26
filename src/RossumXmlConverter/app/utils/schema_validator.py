@@ -1,7 +1,7 @@
 ﻿from flask import jsonify
 from marshmallow import ValidationError
 
-from app.controllers.result_dto import ResultDto
+from ..controllers.result_dto import ResultDto
 
 
 def validate_request(data, schema_class, dto_class, logger):
