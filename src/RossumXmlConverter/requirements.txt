@@ -1,5 +1,4 @@
 ﻿Flask==2.3.2
 flask-httpauth==4.4.0
 requests==2.31.0
-
 marshmallow==3.21.3
