@@ -6,12 +6,11 @@ from .logging_setup import setup_logging
 
 
 def create_app():
-    setup_logging()
+    setup_logging(Config.LOG_LEVEL)
 
     app = Flask(__name__)
 
     # Load Config
-    app.config.from_object(Config)
     app.config.update(
         USERNAME=Config.USERNAME,
         PASSWORD=Config.PASSWORD

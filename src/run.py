@@ -1,9 +1,9 @@
 ﻿import os
 
-from app import create_app
+from app import create_app, Config
 
 app = create_app()
 
 if __name__ == '__main__':
-    debug_mode = os.getenv('DEBUG', 'False').lower() == 'true'
-    app.run(debug=debug_mode)
+    app.config.from_object(Config)
+    app.run(debug=Config.DEBUG, port=Config.PORT)

@@ -1,7 +1,7 @@
 ﻿from logging.config import dictConfig
 
 
-def setup_logging():
+def setup_logging(log_level):
     dictConfig(
         {
             "version": 1,
@@ -18,7 +18,7 @@ def setup_logging():
                 }
             },
             "root": {
-                "level": "INFO",
+                "level": log_level,
                 "handlers": ["console"]},
         }
     )
