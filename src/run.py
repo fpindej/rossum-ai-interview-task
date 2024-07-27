@@ -1,6 +1,4 @@
-﻿import os
-
-from app import create_app, Config
+﻿from app import create_app, Config
 
 app = create_app()
 

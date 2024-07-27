@@ -1,7 +1,7 @@
 ﻿from flask import Flask
 
-from .controllers.export.export import export_bp
 from .config import Config
+from .controllers.export.export import export_bp
 from .logging_setup import setup_logging
 
 
