@@ -4,4 +4,4 @@ app = create_app()
 
 if __name__ == '__main__':
     app.config.from_object(Config)
-    app.run(debug=Config.DEBUG, port=Config.PORT)
+    app.run(debug=Config.DEBUG, port=Config.HOST_PORT)
