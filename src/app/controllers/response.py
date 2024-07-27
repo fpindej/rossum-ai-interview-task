@@ -3,7 +3,7 @@ from typing import Optional, Any
 
 
 @dataclass
-class ResultDto:
+class Response:
     success: bool
     data: Optional[Any] = None
 

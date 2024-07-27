@@ -3,7 +3,7 @@ from flask_httpauth import HTTPBasicAuth
 
 from .export_request_dto import ExportRequestDto
 from .export_request_dto_schema import ExportRequestDtoSchema
-from ..result_dto import ResultDto
+from ..response import Response
 from ...services.auth_service import verify_password as auth_verify_password
 from ...utils.contenttype.content_type_decorator import check_content_type
 from ...utils.contenttype.content_type_enum import ContentType
@@ -27,4 +27,4 @@ def export_data():
     requestDto = validate_request(data=request.get_json(), schema_class=ExportRequestDtoSchema,
                                   dto_class=ExportRequestDto, logger=current_app.logger)
     current_app.logger.info('Exporting data')
-    return jsonify(ResultDto(success=True).serialize()), 200
+    return jsonify(Response(success=True).serialize()), 200

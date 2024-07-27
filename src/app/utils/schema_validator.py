@@ -1,7 +1,7 @@
 ﻿from flask import jsonify
 from marshmallow import ValidationError
 
-from ..controllers.result_dto import ResultDto
+from ..controllers.response import Response
 
 
 def validate_request(data, schema_class, dto_class, logger):
@@ -11,5 +11,5 @@ def validate_request(data, schema_class, dto_class, logger):
         validated_data = schema.load(data)
     except ValidationError as err:
         logger.error(f'Validation error: {err.messages}')
-        return jsonify((ResultDto(success=False, data=err.messages).serialize())), 400
+        return jsonify((Response(success=False, data=err.messages).serialize())), 400
     return dto_class.deserialize(validated_data)
