@@ -1,71 +1,75 @@
-﻿import xml.etree.ElementTree as ElementTree
+﻿import xmltodict
 
-from .export_annotation import ExportAnnotation, Detail, Payable, Document, Modifier, Annotation, Invoices
+from app.annotation_converter.invoice.invoice import InvoiceRegisters, Invoices, Payable
 
 
-def from_xml(xml_str: str) -> ExportAnnotation:
-    root = ElementTree.fromstring(xml_str)
+def extract_datapoint(datapoints, schema_id):
+    for dp in datapoints:
+        if dp.get('@schema_id') == schema_id:
+            return dp.get('#text')
+    return None
 
-    def get_text(element, tag):
-        child = element.find(tag)
-        return child.text if child is not None else None
 
-    def parse_detail(detail_element):
-        return Detail(
-            Amount=float(get_text(detail_element, 'item_amount')),
-            Quantity=int(get_text(detail_element, 'item_quantity')),
-            Notes=get_text(detail_element, 'item_description')
-        )
+def is_list(datapoints):
+    return isinstance(datapoints, list)
 
-    def parse_payable(payable_element):
-        details = []
-        for tuple_element in payable_element.findall(".//tuple"):
-            details.append(parse_detail(tuple_element))
 
-        return Payable(
-            InvoiceNumber=get_text(payable_element, ".//datapoint[@schema_id='invoice_id']"),
-            InvoiceDate=get_text(payable_element, ".//datapoint[@schema_id='date_issue']"),
-            DueDate=get_text(payable_element, ".//datapoint[@schema_id='date_due']"),
-            TotalAmount=float(get_text(payable_element, ".//datapoint[@schema_id='amount_total']")),
-            Iban=get_text(payable_element, ".//datapoint[@schema_id='iban']"),
-            Amount=float(get_text(payable_element, ".//datapoint[@schema_id='amount_total_tax']")),
-            Currency=get_text(payable_element, ".//datapoint[@schema_id='currency']"),
-            Vendor=get_text(payable_element, ".//datapoint[@schema_id='sender_name']"),
-            VendorAddress=get_text(payable_element, ".//datapoint[@schema_id='sender_address']"),
-            Details=details
-        )
+def create_invoice_registers(data: dict) -> InvoiceRegisters:
+    content = data.get('content', {}).get('section', [])
+    invoice_data = {}
 
-    def parse_document(document_element):
-        return Document(
-            file_name=get_text(document_element, "file_name"),
-            file_url=get_text(document_element, "file")
-        )
+    for section in content:
+        schema_id = section.get('@schema_id')
+        datapoints = section.get('datapoint', [])
 
-    def parse_modifier(modifier_element):
-        return Modifier(
-            username=get_text(modifier_element, "username")
-        )
+        match schema_id:
+            case 'basic_info_section':
+                invoice_data['InvoiceNumber'] = extract_datapoint(datapoints, 'document_id')
+                invoice_data['InvoiceDate'] = extract_datapoint(datapoints, 'date_issue')
+                invoice_data['DueDate'] = extract_datapoint(datapoints, 'date_due')
 
-    def parse_annotation(annotation_element):
-        document_element = annotation_element.find("document")
-        modifier_element = annotation_element.find("modifier")
+            case 'amounts_section':
+                invoice_data['TotalAmount'] = float(extract_datapoint(datapoints, 'amount_total') or 0)
+                invoice_data['Amount'] = float(extract_datapoint(datapoints, 'amount_total_base') or 0)
+                invoice_data['Currency'] = extract_datapoint(datapoints, 'currency')
 
-        return Annotation(
-            status=get_text(annotation_element, "status"),
-            arrived_at=get_text(annotation_element, "arrived_at"),
-            exported_at=get_text(annotation_element, "exported_at"),
-            document=parse_document(document_element),
-            modifier=parse_modifier(modifier_element),
-            automated=annotation_element.find("automated").text.lower() == 'true',
-            modified_at=get_text(annotation_element, "modified_at"),
-            assigned_at=get_text(annotation_element, "assigned_at")
-        )
+            case 'vendor_section':
+                invoice_data['Vendor'] = extract_datapoint(datapoints, 'recipient_name')
+                invoice_data['VendorAddress'] = extract_datapoint(datapoints, 'recipient_address')
 
-    annotation = root.find(".//annotation")
-    payable = parse_payable(annotation)
-    annotations = [parse_annotation(annotation)]
+            case 'other_section':
+                if isinstance(datapoints, list):
+                    invoice_data['Notes'] = extract_datapoint(datapoints, 'notes')
+
+    payable = Payable(
+        InvoiceNumber=invoice_data.get('InvoiceNumber'),
+        InvoiceDate=invoice_data.get('InvoiceDate'),
+        DueDate=invoice_data.get('DueDate'),
+        TotalAmount=invoice_data.get('TotalAmount'),
+        Notes=invoice_data.get('Notes'),
+        Iban=invoice_data.get('Iban'),
+        Amount=invoice_data.get('Amount'),
+        Currency=invoice_data.get('Currency'),
+        Vendor=invoice_data.get('Vendor'),
+        VendorAddress=invoice_data.get('VendorAddress'),
+        Details=None  # Details will be handled later
+    )
 
     invoices = Invoices(Payable=payable)
-    invoice_registers = ExportAnnotation(Invoices=invoices, Annotations=annotations)
+    invoice_registers = InvoiceRegisters(Invoices=invoices)
 
     return invoice_registers
+
+
+def from_xml(xml_str: str, annotation_id: str):
+    data = xmltodict.parse(xml_str)
+    annotations = data['export']['results']['annotation']
+    target_annotation = next((a for a in annotations if a['@url'].endswith(annotation_id)), None)
+
+    if not target_annotation:
+        raise ValueError(f"Annotation with id {annotation_id} not found")
+
+    invoice_registers = create_invoice_registers(target_annotation)
+
+    invoice_registers_xml = xmltodict.unparse(invoice_registers.to_dict(), pretty=True)
+    return invoice_registers_xml
