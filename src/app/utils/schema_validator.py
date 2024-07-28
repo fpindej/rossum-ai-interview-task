@@ -5,7 +5,7 @@ from ..controllers.response import Response
 
 
 def validate_request(data, schema_class, dto_class, logger):
-    schema = schema_class(partial=True)
+    schema = schema_class()
     try:
         logger.info('Validating request data')
         validated_data = schema.load(data)

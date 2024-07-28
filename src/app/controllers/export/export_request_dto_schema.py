@@ -1,14 +1,9 @@
-﻿from marshmallow import Schema, fields, EXCLUDE, validates_schema, ValidationError
+﻿from marshmallow import Schema, fields, EXCLUDE
 
 
 class ExportRequestDtoSchema(Schema):
-    annotation_id = fields.Str(required=False)
-    queue_id = fields.Str(required=False)
+    annotation_id = fields.Str(required=True)
+    queue_id = fields.Str(required=True)
 
     class Meta:
         unknown = EXCLUDE
-
-    @validates_schema
-    def validate_at_least_one(self, data, **kwargs):
-        if not data.get('annotation_id') and not data.get('queue_id'):
-            raise ValidationError('At least one of annotation_id or queue_id must be provided.')
