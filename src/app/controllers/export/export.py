@@ -6,6 +6,7 @@ from .export_request_dto_schema import ExportRequestDtoSchema
 from ..response import Response
 from ...services.annotation_service import AnnotationService
 from ...services.auth_service import verify_password as auth_verify_password
+from ...services.invoice_service import InvoiceService
 from ...services.postbin_api_service import PostbinApiService
 from ...services.rossum_api_service import RossumApiService
 from ...utils.contenttype.content_type_decorator import check_content_type
@@ -40,9 +41,7 @@ def export_data():
 
     # For the sake of simplicity I'm relying on a happy path here
     annotation = AnnotationService.extract_annotation_data(export_queue_response.text, request_dto.annotation_id)
-    invoice_registers = AnnotationService.convert_annotation_to_invoice_registers(annotation)
-    invoice_registers_xml = AnnotationService.convert_invoice_registers_to_xml(invoice_registers)
-    invoice_registers_xml_base64 = AnnotationService.convert_invoice_registers_xml_to_base64(invoice_registers_xml)
+    invoice_registers_xml_base64 = InvoiceService.get_base64_invoice(annotation)
 
     try:
         postbin_api_service = PostbinApiService()
