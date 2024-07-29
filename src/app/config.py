@@ -11,4 +11,5 @@ class Config:
     USERNAME = os.getenv('ROSSUM_USERNAME')
     PASSWORD = os.getenv('ROSSUM_PASSWORD')
     # Same as above, this would be a strong type object dedicated for the Rossum API configuration.
-    BASE_URL = 'https://pindej.rossum.app/api/v1/'
+    ROSSUM_API_BASE_URL = 'https://pindej.rossum.app/api/v1'
+    ROSSUM_API_BEARER_TOKEN = '<bearer_token>'

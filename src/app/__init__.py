@@ -13,7 +13,9 @@ def create_app():
     # Load Config
     app.config.update(
         USERNAME=Config.USERNAME,
-        PASSWORD=Config.PASSWORD
+        PASSWORD=Config.PASSWORD,
+        ROSSUM_API_BASE_URL=Config.ROSSUM_API_BASE_URL,
+        ROSSUM_API_BEARER_TOKEN=Config.ROSSUM_API_BEARER_TOKEN
     )
 
     # Register Blueprints

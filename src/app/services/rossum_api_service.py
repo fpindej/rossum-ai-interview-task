@@ -1,0 +1,29 @@
+﻿import requests
+from flask import current_app
+from requests import Response
+
+
+class RossumApiService:
+    def __init__(self):
+        self.base_url = current_app.config['ROSSUM_API_BASE_URL']
+        self.bearer_token = current_app.config['ROSSUM_API_BEARER_TOKEN']
+
+    def export_queue(self, queue_id: str, export_format='xml', export_status='exported') -> Response:
+        headers = {
+            'Authorization': f'Bearer {self.bearer_token}'
+        }
+        query_params = {
+            'format': export_format,
+            'status': export_status
+        }
+        url = f'{self.base_url}/queues/{queue_id}/export'
+
+        current_app.logger.info('Fetching data from Rossum API, url: %s', url)
+        response = requests.get(url, headers=headers, params=query_params)
+
+        if response.status_code != 200:
+            current_app.logger.error(f"Failed to fetch data: {response.status_code} {response.text}")
+            raise Exception("Failed to fetch data from Rossum API")
+
+        current_app.logger.info('Data fetched successfully from Rossum API')
+        return response
