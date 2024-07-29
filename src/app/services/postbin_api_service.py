@@ -1,0 +1,21 @@
+﻿import base64
+
+import requests
+from flask import current_app
+
+
+class PostbinApiService:
+    def __init__(self):
+        # would be loaded from config (same as Rossum API), but let's keep it simple
+        self.base_url = 'https://www.postb.in/1722254934277-6803436439950'
+
+    def send_data(self, annotation_id: str, xml_base64: base64):
+        payload = {
+            'annotationId': annotation_id,
+            'content': xml_base64
+        }
+
+        response = requests.post(self.base_url, json=payload)
+        if response.status_code != 200:
+            current_app.logger.error(f"Failed to send data: {response.status_code} {response.text}")
+            raise Exception("Failed to send data to Postbin API")

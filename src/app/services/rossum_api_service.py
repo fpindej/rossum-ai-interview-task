@@ -12,13 +12,13 @@ class RossumApiService:
         headers = {
             'Content-Type': 'application/json'
         }
-        body = {
+        payload = {
             'username': current_app.config['ROSSUM_API_USERNAME'],
             'password': current_app.config['ROSSUM_API_PASSWORD']
         }
 
         url = f'{self.base_url}/auth/login'
-        response = requests.post(url, headers=headers, json=body)
+        response = requests.post(url, headers=headers, json=payload)
 
         if response.status_code != 200:
             current_app.logger.error(f"Failed to login: {response.status_code} {response.text}")
