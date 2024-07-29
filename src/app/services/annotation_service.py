@@ -1,7 +1,7 @@
 ﻿import xmltodict
 from flask import current_app
 
-from ..annotation_converter.annotation import Annotation, Detail
+from ..models.annotation import Annotation, Detail
 
 
 class AnnotationService:

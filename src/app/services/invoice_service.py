@@ -2,8 +2,8 @@
 
 import xmltodict
 
-from app.annotation_converter.annotation import Annotation
-from app.annotation_converter.invoice import InvoiceRegisters, Invoices, Detail, Payable
+from app.models.annotation import Annotation
+from app.models.invoice import InvoiceRegisters, Invoices, Detail, Payable
 
 
 class InvoiceService:
