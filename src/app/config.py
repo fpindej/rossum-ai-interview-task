@@ -1,5 +1,9 @@
 ﻿import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 # ToDo: Separate the configurations into different classes for better organization.
 class Config:
