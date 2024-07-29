@@ -7,7 +7,7 @@ from flask import current_app
 class PostbinApiService:
     def __init__(self):
         # would be loaded from config (same as Rossum API), but let's keep it simple
-        self.base_url = 'https://www.postb.in/1722254934277-6803436439950'
+        self.base_url = current_app.config['POSTBIN_API_BASE_URL']
 
     def send_data(self, annotation_id: str, xml_base64: base64):
         payload = {
