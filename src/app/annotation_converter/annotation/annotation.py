@@ -3,57 +3,22 @@ from typing import List, Optional
 
 
 @dataclass
-class Datapoint:
-    schema_id: Optional[str] = None
-    text: Optional[str] = None
-
-    @staticmethod
-    def from_dict(data: dict) -> 'Datapoint':
-        return Datapoint(
-            schema_id=data.get('@schema_id'),
-            text=data.get('#text')
-        )
-
-
-@dataclass
-class Multivalue:
-    schema_id: str
-    tuple: List[Datapoint]
-
-    @staticmethod
-    def from_dict(data: dict) -> 'Multivalue':
-        return Multivalue(
-            schema_id=data.get('@schema_id'),
-            tuple=[Datapoint.from_dict(dp) for dp in data.get('tuple', {}).get('datapoint', [])]
-        )
-
-
-@dataclass
-class Section:
-    schema_id: str
-    datapoint: List[Datapoint]
-    multivalue: Optional[Multivalue] = None
-
-    @staticmethod
-    def from_dict(data: dict) -> 'Section':
-        datapoint_data = data.get('datapoint', [])
-        if isinstance(datapoint_data, dict):
-            datapoint_data = [datapoint_data]
-        return Section(
-            schema_id=data.get('@schema_id'),
-            datapoint=[Datapoint.from_dict(dp) for dp in datapoint_data],
-            multivalue=Multivalue.from_dict(data.get('multivalue')) if data.get('multivalue') else None
-        )
+class Detail:
+    item_total_base: Optional[float] = None
+    item_quantity: Optional[int] = None
+    item_description: Optional[str] = None
 
 
 @dataclass
 class Annotation:
-    content: List[Section]
-
-    @staticmethod
-    def from_dict(data: dict) -> 'Annotation':
-        required_sections = {'basic_info_section', 'amounts_section', 'vendor_section', 'payment_info_section',
-                             'other_section'}
-        sections = [Section.from_dict(section) for section in data.get('content', {}).get('section', []) if
-                    section.get('@schema_id') in required_sections]
-        return Annotation(content=sections)
+    details: List[Detail]
+    document_id: Optional[str] = None
+    date_issue: Optional[str] = None
+    date_due: Optional[str] = None
+    amount_total: Optional[float] = None
+    amount_total_base: Optional[float] = None
+    currency: Optional[str] = None
+    recipient_name: Optional[str] = None
+    recipient_address: Optional[str] = None
+    iban: Optional[str] = None
+    notes: Optional[str] = None
