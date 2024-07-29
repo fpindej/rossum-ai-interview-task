@@ -8,6 +8,7 @@ from ..annotation_converter.invoice import InvoiceRegisters, Invoices, Payable, 
 class AnnotationService:
     @staticmethod
     def extract_annotation_data(export_queue_response_text: str, annotation_id: str) -> Annotation:
+        # Consider validating the schema by the XDS file: https://elis.rossum.ai/api/static/api/queues_export.xsd
         data = xmltodict.parse(export_queue_response_text)
         annotations = data['export']['results']['annotation']
         # This works only if there are multiple annotations in the response, otherwise it returns the annotation itself
