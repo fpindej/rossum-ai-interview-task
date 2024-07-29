@@ -29,8 +29,11 @@ def verify_password(username, password):
 @auth.login_required
 @check_content_type(ContentType.APPLICATION_JSON)
 def export_data():
-    request_dto = validate_request(data=request.get_json(), schema_class=ExportRequestDtoSchema,
-                                   dto_class=ExportRequestDto, logger=current_app.logger)
+    request_dto, error_response = validate_request(data=request.get_json(), schema_class=ExportRequestDtoSchema,
+                                                   dto_class=ExportRequestDto, logger=current_app.logger)
+
+    if error_response:
+        return jsonify(error_response.serialize()), 400
 
     try:
         rossum_api_service = RossumApiService()
