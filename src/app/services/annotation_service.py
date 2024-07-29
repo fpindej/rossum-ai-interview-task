@@ -1,10 +1,7 @@
-﻿import base64
-
-import xmltodict
+﻿import xmltodict
 from flask import current_app
 
-from ..annotation_converter.annotation import Annotation, Detail as AnnotationDetail
-from ..annotation_converter.invoice import InvoiceRegisters, Invoices, Payable, Detail as InvoiceDetail
+from ..annotation_converter.annotation import Annotation, Detail
 
 
 class AnnotationService:
@@ -23,7 +20,6 @@ class AnnotationService:
             raise ValueError(f"Annotation with id {annotation_id} not found")
 
         annotations = AnnotationService.__deserialize_annotation(target_annotation)
-        invoice_registers = AnnotationService.convert_annotation_to_invoice_registers(annotations)
         return annotations
 
     @staticmethod
@@ -62,7 +58,7 @@ class AnnotationService:
                         tuples = [tuples]
                     for item in tuples:
                         datapoints = item.get('datapoint', [])
-                        detail = AnnotationDetail(
+                        detail = Detail(
                             item_total_base=float(
                                 AnnotationService.__extract_datapoint(datapoints, 'item_total_base') or 0),
                             item_quantity=int(AnnotationService.__extract_datapoint(datapoints, 'item_quantity') or 0),
@@ -97,35 +93,3 @@ class AnnotationService:
             if dp.get('@schema_id') == schema_id:
                 return dp.get('#text')
         return None
-
-    @staticmethod
-    def convert_annotation_to_invoice_registers(annotation: Annotation) -> InvoiceRegisters:
-        # extract details from annotation
-        details = [
-            InvoiceDetail(Amount=detail.item_total_base, Quantity=detail.item_quantity, Notes=detail.item_description)
-            for detail in annotation.details]
-        payable = Payable(
-            InvoiceNumber=annotation.document_id,
-            InvoiceDate=annotation.date_issue,
-            DueDate=annotation.date_due,
-            TotalAmount=annotation.amount_total,
-            Iban=annotation.iban,
-            Amount=annotation.amount_total_base,
-            Currency=annotation.currency,
-            Vendor=annotation.recipient_name,
-            VendorAddress=annotation.recipient_address,
-            Details=details,
-            Notes=annotation.notes
-        )
-        invoice = Invoices(Payable=payable)
-        invoice_registers = InvoiceRegisters(Invoices=invoice)
-
-        return invoice_registers
-
-    @staticmethod
-    def convert_invoice_registers_to_xml(invoice_registers: InvoiceRegisters) -> str:
-        return xmltodict.unparse(invoice_registers.to_dict(), pretty=True)
-
-    @staticmethod
-    def convert_invoice_registers_xml_to_base64(invoice_registers_xml: str) -> base64:
-        return base64.b64encode(invoice_registers_xml.encode('utf-8')).decode('utf-8')
