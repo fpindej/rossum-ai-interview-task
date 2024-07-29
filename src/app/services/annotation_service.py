@@ -1,4 +1,6 @@
-﻿import xmltodict
+﻿import base64
+
+import xmltodict
 from flask import current_app
 
 from ..annotation_converter.annotation import Annotation, Detail as AnnotationDetail
@@ -119,3 +121,11 @@ class AnnotationService:
         invoice_registers = InvoiceRegisters(Invoices=invoice)
 
         return invoice_registers
+
+    @staticmethod
+    def convert_invoice_registers_to_xml(invoice_registers: InvoiceRegisters) -> str:
+        return xmltodict.unparse(invoice_registers.to_dict(), pretty=True)
+
+    @staticmethod
+    def convert_invoice_registers_xml_to_base64(invoice_registers_xml: str) -> base64:
+        return base64.b64encode(invoice_registers_xml.encode('utf-8')).decode('utf-8')
