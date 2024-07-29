@@ -28,11 +28,13 @@ class RossumApiService:
         bearer_token = response.json()['key']
         return bearer_token
 
-    def export_queue(self, queue_id: str, export_format='xml', export_status='exported') -> Response:
+    def export_queue(self, queue_id: str, annotation_id: str, export_format='xml',
+                     export_status='exported') -> Response:
         headers = {
             'Authorization': f'Bearer {self.bearer_token}'
         }
         query_params = {
+            'id': annotation_id,
             'format': export_format,
             'status': export_status
         }

@@ -6,21 +6,13 @@ from ..models.annotation import Annotation, Detail
 
 class AnnotationService:
     @staticmethod
-    def extract_annotation_data(export_queue_response_text: str, annotation_id: str) -> Annotation:
+    def extract_annotation_data(export_queue_response_text: str, ) -> Annotation:
         # Consider validating the schema by the XDS file: https://elis.rossum.ai/api/static/api/queues_export.xsd
         data = xmltodict.parse(export_queue_response_text)
-        annotations = data['export']['results']['annotation']
-        # This works only if there are multiple annotations in the response, otherwise it returns the annotation itself
-        # Might be better to return the annotation itself if there is only one annotation
-        # Let's keep it as is for now just to keep it simple for the sake of this example
-        target_annotation = next((a for a in annotations if a['@url'].endswith(annotation_id)), None)
+        annotation_dict = data['export']['results']['annotation']
 
-        if not target_annotation:
-            current_app.logger.error(f"Annotation with id {annotation_id} not found")
-            raise ValueError(f"Annotation with id {annotation_id} not found")
-
-        annotations = AnnotationService.__deserialize_annotation(target_annotation)
-        return annotations
+        annotation = AnnotationService.__deserialize_annotation(annotation_dict)
+        return annotation
 
     @staticmethod
     def __deserialize_annotation(data: dict) -> Annotation:

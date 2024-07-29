@@ -37,13 +37,14 @@ def export_data():
 
     try:
         rossum_api_service = RossumApiService()
-        export_queue_response = rossum_api_service.export_queue(queue_id=request_dto.queue_id)
+        export_queue_response = rossum_api_service.export_queue(queue_id=request_dto.queue_id,
+                                                                annotation_id=request_dto.annotation_id)
     except Exception as e:
         current_app.logger.error(f'Failed to export data: {e}')
         return jsonify(Response(success=False).serialize()), 500
 
     # For the sake of simplicity I'm relying on a happy path here
-    annotation = AnnotationService.extract_annotation_data(export_queue_response.text, request_dto.annotation_id)
+    annotation = AnnotationService.extract_annotation_data(export_queue_response.text)
     invoice_registers_xml_base64 = InvoiceService.get_base64_invoice(annotation)
 
     try:
