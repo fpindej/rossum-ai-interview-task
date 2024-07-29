@@ -1,8 +1,8 @@
 ﻿import xmltodict
 from flask import current_app
 
-from ..annotation_converter.annotation.annotation import Annotation, Detail as AnnotationDetail
-from ..annotation_converter.invoice.invoice import InvoiceRegisters, Invoices, Payable, Detail as InvoiceDetail
+from ..annotation_converter.annotation import Annotation, Detail as AnnotationDetail
+from ..annotation_converter.invoice import InvoiceRegisters, Invoices, Payable, Detail as InvoiceDetail
 
 
 class AnnotationService:
