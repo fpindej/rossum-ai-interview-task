@@ -10,6 +10,6 @@ services:
       - "5000:5000"
     environment:
       FLASK_ENV: development
-      ROSSUM_USERNAME: 'myUser123'
-      ROSSUM_PASSWORD: 'secretSecret'
+      EXPORT_USERNAME: 'myUser123'
+      EXPORT_PASSWORD: 'secretSecret'
       DEBUG: 'false'

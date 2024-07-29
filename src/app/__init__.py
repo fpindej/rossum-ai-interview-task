@@ -12,8 +12,8 @@ def create_app():
 
     # Load Config
     app.config.update(
-        USERNAME=Config.USERNAME,
-        PASSWORD=Config.PASSWORD,
+        EXPORT_USERNAME=Config.EXPORT_USERNAME,
+        EXPORT_PASSWORD=Config.EXPORT_PASSWORD,
         ROSSUM_API_BASE_URL=Config.ROSSUM_API_BASE_URL,
         ROSSUM_API_USERNAME=Config.ROSSUM_API_USERNAME,
         ROSSUM_API_PASSWORD=Config.ROSSUM_API_PASSWORD
