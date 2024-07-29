@@ -7,10 +7,11 @@ from app.annotation_converter.invoice import InvoiceRegisters, Invoices, Detail,
 
 
 class InvoiceService:
-    def get_base64_invoice(self, annotation: Annotation) -> base64:
-        invoice_registers = self.convert_annotation_to_invoice_registers(annotation)
-        invoice_registers_xml = self.convert_invoice_registers_to_xml(invoice_registers)
-        invoice_registers_xml_base64 = self.convert_invoice_registers_xml_to_base64(invoice_registers_xml)
+    @staticmethod
+    def get_base64_invoice(annotation: Annotation) -> str:
+        invoice_registers = InvoiceService.convert_annotation_to_invoice_registers(annotation)
+        invoice_registers_xml = InvoiceService.convert_invoice_registers_to_xml(invoice_registers)
+        invoice_registers_xml_base64 = InvoiceService.convert_invoice_registers_xml_to_base64(invoice_registers_xml)
 
         return invoice_registers_xml_base64
 
